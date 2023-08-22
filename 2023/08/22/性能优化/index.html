@@ -1,0 +1,737 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=auto>
+
+
+
+<head>
+  <meta charset="UTF-8">
+  <link rel="apple-touch-icon" sizes="76x76" href="/xuxiaodi666/my-blog.git/img/fluid.png">
+  <link rel="icon" href="/xuxiaodi666/my-blog.git/img/fluid.png">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="徐嘉迪">
+  <meta name="keywords" content="React">
+  
+    <meta name="description" content="URL解析，DNS，TCP（三次握手），HTTP请求响应过程，HTML、CSS、JS的加载顺序，DOM树、CSS树、渲染树，重绘和回流等。每个加载的流程都对应有性能优化的思路，如：DNS寻址原理和预解析；TCP连接有慢启动、拥塞控制所以要复用连接；HTTP2&#x2F;3优化请求效率；资源压缩、合并、减少请求等减少请求数据量；CDN、http缓存、前端缓存等；减少回流等渲染性能优化；worker">
+<meta property="og:type" content="article">
+<meta property="og:title" content="性能优化">
+<meta property="og:url" content="https://xuxiaodi666.github.io/my-blog/2023/08/22/%E6%80%A7%E8%83%BD%E4%BC%98%E5%8C%96/index.html">
+<meta property="og:site_name" content="欢迎来到徐嘉迪的博客">
+<meta property="og:description" content="URL解析，DNS，TCP（三次握手），HTTP请求响应过程，HTML、CSS、JS的加载顺序，DOM树、CSS树、渲染树，重绘和回流等。每个加载的流程都对应有性能优化的思路，如：DNS寻址原理和预解析；TCP连接有慢启动、拥塞控制所以要复用连接；HTTP2&#x2F;3优化请求效率；资源压缩、合并、减少请求等减少请求数据量；CDN、http缓存、前端缓存等；减少回流等渲染性能优化；worker">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2023-08-22T08:32:38.000Z">
+<meta property="article:modified_time" content="2023-08-22T08:37:40.706Z">
+<meta property="article:author" content="徐嘉迪">
+<meta property="article:tag" content="性能优化">
+<meta name="twitter:card" content="summary_large_image">
+  
+  
+    <meta name="referrer" content="no-referrer-when-downgrade">
+  
+  
+  <title>性能优化 - 欢迎来到徐嘉迪的博客</title>
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
+
+
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/github-markdown-css/4.0.0/github-markdown.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/hint.css/2.7.0/hint.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.css" />
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+<!-- Do not modify the link that theme dependent icons -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1749284_hj8rtnfg7um.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_lbnruvf0jn.css">
+
+
+<link  rel="stylesheet" href="/xuxiaodi666/my-blog.git/css/main.css" />
+
+
+  <link id="highlight-css" rel="stylesheet" href="/xuxiaodi666/my-blog.git/css/highlight.css" />
+  
+    <link id="highlight-css-dark" rel="stylesheet" href="/xuxiaodi666/my-blog.git/css/highlight-dark.css" />
+  
+
+
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    Fluid.ctx = Object.assign({}, Fluid.ctx)
+    var CONFIG = {"hostname":"xuxiaodi666.github.io","root":"/xuxiaodi666/my-blog.git/","version":"1.9.5-a","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":{"measurement_id":null},"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false}},"search_path":"/xuxiaodi666/my-blog.git/local-search.xml","include_content_in_search":true};
+
+    if (CONFIG.web_analytics.follow_dnt) {
+      var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
+      Fluid.ctx.dnt = dntVal && (dntVal.startsWith('1') || dntVal.startsWith('yes') || dntVal.startsWith('on'));
+    }
+  </script>
+  <script  src="/xuxiaodi666/my-blog.git/js/utils.js" ></script>
+  <script  src="/xuxiaodi666/my-blog.git/js/color-schema.js" ></script>
+  
+
+
+  
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+
+<body>
+  
+
+  <header>
+    
+
+<div class="header-inner" style="height: 70vh;">
+  <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/xuxiaodi666/my-blog.git/">
+      <strong>徐嘉迪的博客</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/xuxiaodi666/my-blog.git/">
+                <i class="iconfont icon-home-fill"></i>
+                <span>首页</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/xuxiaodi666/my-blog.git/archives/">
+                <i class="iconfont icon-archive-fill"></i>
+                <span>归档</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/xuxiaodi666/my-blog.git/categories/">
+                <i class="iconfont icon-category-fill"></i>
+                <span>分类</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/xuxiaodi666/my-blog.git/tags/">
+                <i class="iconfont icon-tags-fill"></i>
+                <span>标签</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/xuxiaodi666/my-blog.git/about/">
+                <i class="iconfont icon-user-fill"></i>
+                <span>关于</span>
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              <i class="iconfont icon-search"></i>
+            </a>
+          </li>
+          
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">
+              <i class="iconfont icon-dark" id="color-toggle-icon"></i>
+            </a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+  
+
+<div id="banner" class="banner" parallax=true
+     style="background: url('/xuxiaodi666/my-blog.git/img/defaultb.png') no-repeat center center; background-size: cover;">
+  <div class="full-bg-img">
+    <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+      <div class="banner-text text-center fade-in-up">
+        <div class="h2">
+          
+            <span id="subtitle" data-typed-text="性能优化"></span>
+          
+        </div>
+
+        
+          
+  <div class="mt-3">
+    
+    
+      <span class="post-meta">
+        <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+        <time datetime="2023-08-22 16:32" pubdate>
+          2023年8月22日 下午
+        </time>
+      </span>
+    
+  </div>
+
+  <div class="mt-1">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-chart"></i>
+        
+          4.6k 字
+        
+      </span>
+    
+
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-clock-fill"></i>
+        
+        
+        
+          39 分钟
+        
+      </span>
+    
+
+    
+    
+      
+        <span id="busuanzi_container_page_pv" style="display: none">
+          <i class="iconfont icon-eye" aria-hidden="true"></i>
+          <span id="busuanzi_value_page_pv"></span> 次
+        </span>
+        
+      
+    
+  </div>
+
+
+        
+      </div>
+
+      
+    </div>
+  </div>
+</div>
+
+</div>
+
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+
+    </div>
+
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div id="board">
+          <article class="post-content mx-auto">
+            <h1 id="seo-header">性能优化</h1>
+            
+              <p class="note note-info">
+                
+                  
+                    本文最后更新于：2023年8月22日 下午
+                  
+                
+              </p>
+            
+            
+              <div class="markdown-body">
+                
+                <blockquote>
+<p>URL解析，DNS，TCP（三次握手），HTTP请求响应过程，HTML、CSS、JS的加载顺序，DOM树、CSS树、渲染树，重绘和回流等。每个加载的流程都对应有性能优化的思路，如：DNS寻址原理和预解析；TCP连接有慢启动、拥塞控制所以要复用连接；HTTP2&#x2F;3优化请求效率；资源压缩、合并、减少请求等减少请求数据量；CDN、http缓存、前端缓存等；减少回流等渲染性能优化；worker、WebAssembly等脚本性能优化；服务端渲染、预加载、懒加载、骨架屏优化用户体验等等。</p>
+</blockquote>
+<p>URL解析：<br>URL解析是指将一个URL字符串解析成不同的组成部分，如协议、主机名、端口号、路径、查询参数等。以下是URL解析的步骤：</p>
+<ol>
+<li>使用正则表达式或URL解析库将URL字符串分解成不同的部分。</li>
+<li>解析协议部分，确定使用的协议（如HTTP、HTTPS）。</li>
+<li>解析主机名部分，确定要请求的服务器的主机名。</li>
+<li>解析端口号部分，确定要请求的服务器的端口号。</li>
+<li>解析路径部分，确定请求的资源在服务器上的路径。</li>
+<li>解析查询参数部分，将查询参数解析成键值对的形式。</li>
+</ol>
+<p>示例代码：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br></pre></td><td class="code"><pre><code class="hljs javascript"><span class="hljs-keyword">function</span> <span class="hljs-title function_">parseUrl</span>(<span class="hljs-params">url</span>) &#123;<br>  <span class="hljs-keyword">const</span> regex = <span class="hljs-regexp">/^(https?):\/\/([^:/?]+)(?::(\d+))?(\/[^?]+)?(?:\?(.+))?$/</span>;<br>  <span class="hljs-keyword">const</span> matches = url.<span class="hljs-title function_">match</span>(regex);<br>  <span class="hljs-keyword">if</span> (matches) &#123;<br>    <span class="hljs-keyword">const</span> protocol = matches[<span class="hljs-number">1</span>];<br>    <span class="hljs-keyword">const</span> host = matches[<span class="hljs-number">2</span>];<br>    <span class="hljs-keyword">const</span> port = matches[<span class="hljs-number">3</span>];<br>    <span class="hljs-keyword">const</span> path = matches[<span class="hljs-number">4</span>];<br>    <span class="hljs-keyword">const</span> queryString = matches[<span class="hljs-number">5</span>];<br>    <span class="hljs-keyword">const</span> queryParams = &#123;&#125;;<br>    <span class="hljs-keyword">if</span> (queryString) &#123;<br>      <span class="hljs-keyword">const</span> pairs = queryString.<span class="hljs-title function_">split</span>(<span class="hljs-string">&#x27;&amp;&#x27;</span>);<br>      <span class="hljs-keyword">for</span> (<span class="hljs-keyword">let</span> pair <span class="hljs-keyword">of</span> pairs) &#123;<br>        <span class="hljs-keyword">const</span> [key, value] = pair.<span class="hljs-title function_">split</span>(<span class="hljs-string">&#x27;=&#x27;</span>);<br>        queryParams[key] = value;<br>      &#125;<br>    &#125;<br>    <span class="hljs-keyword">return</span> &#123;<br>      protocol,<br>      host,<br>      port,<br>      path,<br>      queryParams<br>    &#125;;<br>  &#125;<br>  <span class="hljs-keyword">return</span> <span class="hljs-literal">null</span>;<br>&#125;<br><br><span class="hljs-keyword">const</span> url = <span class="hljs-string">&#x27;https://www.example.com:8080/path/to/resource?param1=value1&amp;param2=value2&#x27;</span>;<br><span class="hljs-keyword">const</span> parsedUrl = <span class="hljs-title function_">parseUrl</span>(url);<br><span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(parsedUrl);<br></code></pre></td></tr></table></figure>
+
+<p>DNS：<br>DNS（Domain Name System）是将域名转换为IP地址的系统。当用户在浏览器中输入一个域名时，浏览器需要通过DNS解析将域名转换为对应的IP地址，以便与服务器进行通信。以下是DNS解析的步骤：</p>
+<ol>
+<li>浏览器首先会检查本地缓存中是否有对应的域名解析结果，如果有则直接使用。</li>
+<li>如果本地缓存中没有对应的解析结果，浏览器会向本地DNS服务器发送一个DNS解析请求。</li>
+<li>本地DNS服务器会首先检查自己的缓存中是否有对应的解析结果，如果有则返回给浏览器。</li>
+<li>如果本地DNS服务器的缓存中没有对应的解析结果，它会向根域名服务器发送一个请求，根域名服务器会返回负责该域名的顶级域名服务器的地址。</li>
+<li>本地DNS服务器继续向顶级域名服务器发送请求，顶级域名服务器会返回负责该域名的权威域名服务器的地址。</li>
+<li>本地DNS服务器继续向权威域名服务器发送请求，权威域名服务器会返回该域名对应的IP地址。</li>
+<li>本地DNS服务器将解析结果返回给浏览器，并将结果缓存起来，以供下次使用。</li>
+</ol>
+<p>示例代码：<br>由于DNS解析是由浏览器自动完成的，无需编写代码进行DNS解析。</p>
+<p>TCP（三次握手）：<br>TCP（Transmission Control Protocol）是一种可靠的传输协议，它使用三次握手来建立一个连接。以下是TCP三次握手的过程：</p>
+<ol>
+<li>客户端向服务器发送一个SYN（同步）报文，其中包含客户端的初始序列号。</li>
+<li>服务器接收到SYN报文后，向客户端发送一个SYN-ACK（同步-确认）报文，其中包含服务器的初始序列号和确认号（客户端的初始序列号+1）。</li>
+<li>客户端接收到SYN-ACK报文后，向服务器发送一个ACK（确认）报文，其中包含确认号（服务器的初始序列号+1）。</li>
+<li>服务器接收到ACK报文后，连接建立成功。</li>
+</ol>
+<p>示例代码：<br>由于TCP连接的建立是由操作系统的网络协议栈完成的，无需编写代码进行TCP三次握手。</p>
+<p>HTTP请求响应过程：<br>HTTP（Hypertext Transfer Protocol）是一种用于传输超文本的协议。以下是HTTP请求响应的过程：</p>
+<ol>
+<li>客户端向服务器发送一个HTTP请求，其中包含请求方法（如GET、POST）、URL、请求头和请求体（对于POST请求）等信息。</li>
+<li>服务器接收到请求后，根据请求的URL和方法，处理请求并生成一个HTTP响应。</li>
+<li>服务器将HTTP响应发送回客户端，其中包含响应状态码、响应头和响应体等信息。</li>
+<li>客户端接收到响应后，根据响应的状态码和头部信息，对响应进行处理，如渲染页面或执行其他操作。</li>
+</ol>
+<p>示例代码：<br>由于HTTP请求和响应是由浏览器自动完成的，无需编写代码进行HTTP请求响应。</p>
+<p>HTML、CSS、JS的加载顺序：<br>HTML、CSS和JS的加载顺序对于页面的渲染和交互行为有重要影响。一般情况下，浏览器会按照以下顺序加载HTML、CSS和JS：</p>
+<ol>
+<li>加载HTML：浏览器首先加载HTML文档，并构建DOM树。</li>
+<li>加载CSS：浏览器在构建DOM树的过程中，遇到CSS链接标签（如<code>&lt;link&gt;</code>）或内联样式（如<code>&lt;style&gt;</code>），会开始加载CSS文件，并构建CSSOM树。</li>
+<li>加载JS：浏览器在构建DOM树和CSSOM树的过程中，遇到JS脚本标签（如<code>&lt;script&gt;</code>），会开始加载JS文件，并执行其中的代码。</li>
+</ol>
+<p>示例代码：<br>HTML：</p>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><code class="hljs html"><span class="hljs-meta">&lt;!DOCTYPE <span class="hljs-keyword">html</span>&gt;</span><br><span class="hljs-tag">&lt;<span class="hljs-name">html</span>&gt;</span><br><span class="hljs-tag">&lt;<span class="hljs-name">head</span>&gt;</span><br>  <span class="hljs-tag">&lt;<span class="hljs-name">link</span> <span class="hljs-attr">rel</span>=<span class="hljs-string">&quot;stylesheet&quot;</span> <span class="hljs-attr">href</span>=<span class="hljs-string">&quot;styles.css&quot;</span>&gt;</span><br><span class="hljs-tag">&lt;/<span class="hljs-name">head</span>&gt;</span><br><span class="hljs-tag">&lt;<span class="hljs-name">body</span>&gt;</span><br>  <span class="hljs-tag">&lt;<span class="hljs-name">h1</span>&gt;</span>Hello, World!<span class="hljs-tag">&lt;/<span class="hljs-name">h1</span>&gt;</span><br>  <span class="hljs-tag">&lt;<span class="hljs-name">script</span> <span class="hljs-attr">src</span>=<span class="hljs-string">&quot;script.js&quot;</span>&gt;</span><span class="hljs-tag">&lt;/<span class="hljs-name">script</span>&gt;</span><br><span class="hljs-tag">&lt;/<span class="hljs-name">body</span>&gt;</span><br><span class="hljs-tag">&lt;/<span class="hljs-name">html</span>&gt;</span><br></code></pre></td></tr></table></figure>
+
+<p>CSS（styles.css）：</p>
+<figure class="highlight css"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs css"><span class="hljs-selector-tag">body</span> &#123;<br>  <span class="hljs-attribute">background-color</span>: <span class="hljs-number">#f0f0f0</span>;<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<p>JS（script.js）：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs javascript"><span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(<span class="hljs-string">&#x27;Hello, World!&#x27;</span>);<br></code></pre></td></tr></table></figure>
+
+<p>DOM树、CSS树、渲染树：<br>DOM树（Document Object Model）是由HTML文档中的元素节点、文本节点和属性节点等组成的树状结构，表示了页面的结构和内容。<br>CSS树（CSS Object Model）是由CSS样式表中的规则和声明等组成的树状结构，表示了页面的样式规则。<br>渲染树（Render Tree）是由DOM树和CSS树合并而成的树状结构，表示了页面的渲染结果。</p>
+<p>示例代码：<br>HTML：</p>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><code class="hljs html"><span class="hljs-meta">&lt;!DOCTYPE <span class="hljs-keyword">html</span>&gt;</span><br><span class="hljs-tag">&lt;<span class="hljs-name">html</span>&gt;</span><br><span class="hljs-tag">&lt;<span class="hljs-name">head</span>&gt;</span><br>  <span class="hljs-tag">&lt;<span class="hljs-name">link</span> <span class="hljs-attr">rel</span>=<span class="hljs-string">&quot;stylesheet&quot;</span> <span class="hljs-attr">href</span>=<span class="hljs-string">&quot;styles.css&quot;</span>&gt;</span><br><span class="hljs-tag">&lt;/<span class="hljs-name">head</span>&gt;</span><br><span class="hljs-tag">&lt;<span class="hljs-name">body</span>&gt;</span><br>  <span class="hljs-tag">&lt;<span class="hljs-name">h1</span>&gt;</span>Hello, World!<span class="hljs-tag">&lt;/<span class="hljs-name">h1</span>&gt;</span><br><span class="hljs-tag">&lt;/<span class="hljs-name">body</span>&gt;</span><br><span class="hljs-tag">&lt;/<span class="hljs-name">html</span>&gt;</span><br></code></pre></td></tr></table></figure>
+
+<p>CSS（styles.css）：</p>
+<figure class="highlight css"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs css"><span class="hljs-selector-tag">h1</span> &#123;<br>  <span class="hljs-attribute">color</span>: red;<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<p>渲染树：</p>
+<figure class="highlight markdown"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><code class="hljs markdown"><span class="hljs-bullet">-</span> Document<br><span class="hljs-bullet">  -</span> html<br><span class="hljs-bullet">    -</span> head<br><span class="hljs-bullet">      -</span> link<br><span class="hljs-bullet">    -</span> body<br><span class="hljs-bullet">      -</span> h1<br></code></pre></td></tr></table></figure>
+
+<p>重绘和回流：<br>重绘（Repaint）是指当页面的样式发生改变，但布局不变时，浏览器会重新绘制页面的部分或全部内容。<br>回流（Reflow）是指当页面的布局发生改变，浏览器需要重新计算元素的位置和大小，然后重新绘制页面。</p>
+<p>示例代码：<br>HTML：</p>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><code class="hljs html"><span class="hljs-meta">&lt;!DOCTYPE <span class="hljs-keyword">html</span>&gt;</span><br><span class="hljs-tag">&lt;<span class="hljs-name">html</span>&gt;</span><br><span class="hljs-tag">&lt;<span class="hljs-name">head</span>&gt;</span><br>  <span class="hljs-tag">&lt;<span class="hljs-name">link</span> <span class="hljs-attr">rel</span>=<span class="hljs-string">&quot;stylesheet&quot;</span> <span class="hljs-attr">href</span>=<span class="hljs-string">&quot;styles.css&quot;</span>&gt;</span><br><span class="hljs-tag">&lt;/<span class="hljs-name">head</span>&gt;</span><br><span class="hljs-tag">&lt;<span class="hljs-name">body</span>&gt;</span><br>  <span class="hljs-tag">&lt;<span class="hljs-name">h1</span>&gt;</span>Hello, World!<span class="hljs-tag">&lt;/<span class="hljs-name">h1</span>&gt;</span><br><span class="hljs-tag">&lt;/<span class="hljs-name">body</span>&gt;</span><br><span class="hljs-tag">&lt;/<span class="hljs-name">html</span>&gt;</span><br></code></pre></td></tr></table></figure>
+
+<p>CSS（styles.css）：</p>
+<figure class="highlight css"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><code class="hljs css"><span class="hljs-selector-tag">h1</span> &#123;<br>  <span class="hljs-attribute">color</span>: red;<br>  <span class="hljs-attribute">margin-left</span>: <span class="hljs-number">100px</span>;<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<p>重绘和回流的触发：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs javascript"><span class="hljs-keyword">const</span> h1 = <span class="hljs-variable language_">document</span>.<span class="hljs-title function_">querySelector</span>(<span class="hljs-string">&#x27;h1&#x27;</span>);<br>h1.<span class="hljs-property">style</span>.<span class="hljs-property">color</span> = <span class="hljs-string">&#x27;blue&#x27;</span>; <span class="hljs-comment">// 触发重绘</span><br>h1.<span class="hljs-property">style</span>.<span class="hljs-property">marginLeft</span> = <span class="hljs-string">&#x27;200px&#x27;</span>; <span class="hljs-comment">// 触发回流和重绘</span><br></code></pre></td></tr></table></figure>
+
+<p>性能优化的思路：</p>
+<ol>
+<li>DNS寻址原理和预解析：使用CDN将静态资源部署到离用户更近的地方，减少DNS解析的时间；在HTML中添加<code>&lt;link rel=&quot;dns-prefetch&quot;&gt;</code>标签，预解析域名，提前获取IP地址。</li>
+<li>TCP连接复用：使用HTTP的持久连接，通过Connection头部字段设置keep-alive，使多个HTTP请求可以复用同一个TCP连接，减少TCP连接的建立和关闭的开销。</li>
+<li>HTTP2&#x2F;3优化请求效率：使用HTTP2&#x2F;3协议，通过多路复用、头部压缩和服务器推送等技术，减少请求的延迟和数据量。</li>
+<li>资源压缩、合并、减少请求：对CSS和JS进行压缩，将多个CSS和JS文件合并成一个文件，减少HTTP请求的数量和数据量。</li>
+<li>CDN、HTTP缓存、前端缓存：使用CDN将静态资源缓存到离用户更近的地方，减少网络延迟；使用HTTP缓存和前端缓存，减少对服务器的请求。</li>
+<li>减少回流等渲染性能优化：避免频繁修改样式，可以通过添加或删除CSS类名的方式来修改样式；使用transform和opacity等属性，避免触发回流。</li>
+<li>Worker、WebAssembly等脚本性能优化：使用Web Worker将一些计算密集型的任务放到后台线程中执行，避免阻塞主线程；使用WebAssembly将性能敏感的代码编译为二进制格式，提高执行效率。</li>
+<li>服务端渲染、预加载、懒加载、骨架屏优化用户体验：使用服务端渲染减少首屏加载时间；使用预加载和懒加载技术，提前加载或延迟加载资源；使用骨架屏展示页面的基本结构，提高用户感知的加载速度。</li>
+</ol>
+
+                
+              </div>
+            
+            <hr/>
+            <div>
+              <div class="post-metas my-3">
+  
+    <div class="post-meta mr-3 d-flex align-items-center">
+      <i class="iconfont icon-category"></i>
+      
+
+<span class="category-chains">
+  
+  
+    
+      <span class="category-chain">
+        
+  <a href="/xuxiaodi666/my-blog.git/categories/%E6%80%A7%E8%83%BD%E4%BC%98%E5%8C%96/" class="category-chain-item">性能优化</a>
+  
+  
+
+      </span>
+    
+  
+</span>
+
+    </div>
+  
+  
+    <div class="post-meta">
+      <i class="iconfont icon-tags"></i>
+      
+        <a href="/xuxiaodi666/my-blog.git/tags/%E6%80%A7%E8%83%BD%E4%BC%98%E5%8C%96/" class="print-no-link">#性能优化</a>
+      
+    </div>
+  
+</div>
+
+
+              
+  
+
+  <div class="license-box my-3">
+    <div class="license-title">
+      <div>性能优化</div>
+      <div>https://xuxiaodi666.github.io/my-blog/2023/08/22/性能优化/</div>
+    </div>
+    <div class="license-meta">
+      
+        <div class="license-meta-item">
+          <div>作者</div>
+          <div>徐嘉迪</div>
+        </div>
+      
+      
+        <div class="license-meta-item license-meta-date">
+          <div>发布于</div>
+          <div>2023年8月22日</div>
+        </div>
+      
+      
+      
+    </div>
+    <div class="license-icon iconfont"></div>
+  </div>
+
+
+
+              
+                <div class="post-prevnext my-3">
+                  <article class="post-prev col-6">
+                    
+                    
+                      <a href="/xuxiaodi666/my-blog.git/2023/08/22/%E7%AE%97%E6%B3%95/" title="算法">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile">算法</span>
+                        <span class="visible-mobile">上一篇</span>
+                      </a>
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/xuxiaodi666/my-blog.git/2023/08/22/%E7%BD%91%E7%BB%9C%E5%8D%8F%E8%AE%AE/" title="网络协议">
+                        <span class="hidden-mobile">网络协议</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+          </article>
+        </div>
+      </div>
+    </div>
+
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+  <aside class="sidebar" style="margin-left: -1rem">
+    <div id="toc">
+  <p class="toc-header">
+    <i class="iconfont icon-list"></i>
+    <span>目录</span>
+  </p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+
+
+  </aside>
+
+
+    </div>
+  </div>
+</div>
+
+
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+
+
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v" for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+  
+    <div class="footer-content">
+       <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>徐嘉迪</span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"><span>郝娅惠</span></a> 
+    </div>
+  
+  
+  
+  
+</div>
+
+  </footer>
+
+  <!-- Scripts -->
+  
+  <script  src="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://lib.baomitu.com/jquery/3.6.4/jquery.min.js" ></script>
+<script  src="https://lib.baomitu.com/twitter-bootstrap/4.6.1/js/bootstrap.min.js" ></script>
+<script  src="/xuxiaodi666/my-blog.git/js/events.js" ></script>
+<script  src="/xuxiaodi666/my-blog.git/js/plugins.js" ></script>
+
+
+  <script  src="https://lib.baomitu.com/typed.js/2.0.12/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var subtitle = document.getElementById('subtitle');
+      if (!subtitle || !typing) {
+        return;
+      }
+      var text = subtitle.getAttribute('data-typed-text');
+      
+        typing(text);
+      
+    })(window, document);
+  </script>
+
+
+
+
+  
+    <script  src="/xuxiaodi666/my-blog.git/js/img-lazyload.js" ></script>
+  
+
+
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/tocbot/4.20.1/tocbot.min.js', function() {
+    var toc = jQuery('#toc');
+    if (toc.length === 0 || !window.tocbot) { return; }
+    var boardCtn = jQuery('#board-ctn');
+    var boardTop = boardCtn.offset().top;
+
+    window.tocbot.init(Object.assign({
+      tocSelector     : '#toc-body',
+      contentSelector : '.markdown-body',
+      linkClass       : 'tocbot-link',
+      activeLinkClass : 'tocbot-active-link',
+      listClass       : 'tocbot-list',
+      isCollapsedClass: 'tocbot-is-collapsed',
+      collapsibleClass: 'tocbot-is-collapsible',
+      scrollSmooth    : true,
+      includeTitleTags: true,
+      headingsOffset  : -boardTop,
+    }, CONFIG.toc));
+    if (toc.find('.toc-list-item').length > 0) {
+      toc.css('visibility', 'visible');
+    }
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('tocbot' in window) {
+        tocbot.refresh();
+        var toc = jQuery('#toc');
+        if (toc.length === 0 || !tocbot) {
+          return;
+        }
+        if (toc.find('.toc-list-item').length > 0) {
+          toc.css('visibility', 'visible');
+        }
+      }
+    });
+  });
+</script>
+
+
+  <script src=https://lib.baomitu.com/clipboard.js/2.0.11/clipboard.min.js></script>
+
+  <script>Fluid.plugins.codeWidget();</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/anchor-js/4.3.1/anchor.min.js', function() {
+    window.anchors.options = {
+      placement: CONFIG.anchorjs.placement,
+      visible  : CONFIG.anchorjs.visible
+    };
+    if (CONFIG.anchorjs.icon) {
+      window.anchors.options.icon = CONFIG.anchorjs.icon;
+    }
+    var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+    var res = [];
+    for (var item of el) {
+      res.push('.markdown-body > ' + item.trim());
+    }
+    if (CONFIG.anchorjs.placement === 'left') {
+      window.anchors.options.class = 'anchorjs-link-left';
+    }
+    window.anchors.add(res.join(', '));
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('anchors' in window) {
+        anchors.removeAll();
+        var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+        var res = [];
+        for (var item of el) {
+          res.push('.markdown-body > ' + item.trim());
+        }
+        if (CONFIG.anchorjs.placement === 'left') {
+          anchors.options.class = 'anchorjs-link-left';
+        }
+        anchors.add(res.join(', '));
+      }
+    });
+  });
+</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.js', function() {
+    Fluid.plugins.fancyBox();
+  });
+</script>
+
+
+  <script>Fluid.plugins.imageCaption();</script>
+
+  <script  src="/xuxiaodi666/my-blog.git/js/local-search.js" ></script>
+
+  <script defer src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js" ></script>
+
+
+
+
+
+<!-- 主题的启动项，将它保持在最底部 -->
+<!-- the boot of the theme, keep it at the bottom -->
+<script  src="/xuxiaodi666/my-blog.git/js/boot.js" ></script>
+
+
+  
+
+  <noscript>
+    <div class="noscript-warning">博客在允许 JavaScript 运行的环境下浏览效果更佳</div>
+  </noscript>
+</body>
+</html>

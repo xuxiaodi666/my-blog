@@ -1,0 +1,896 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=auto>
+
+
+
+<head>
+  <meta charset="UTF-8">
+  <link rel="apple-touch-icon" sizes="76x76" href="/xuxiaodi666/my-blog.git/img/fluid.png">
+  <link rel="icon" href="/xuxiaodi666/my-blog.git/img/fluid.png">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="徐嘉迪">
+  <meta name="keywords" content="React">
+  
+    <meta name="description" content="讲一下http缓存的优先级？  HTTP缓存的优先级由浏览器决定，通常按照以下顺序进行判断：  强缓存（Expires和Cache-Control）：浏览器首先检查资源的Expires和Cache-Control头部字段。如果当前时间在Expires指定的过期时间之前，或者Cache-Control中指定了max-age并且没有过期，则直接使用缓存副本，不发送请求到服务器。  协商缓存（Last">
+<meta property="og:type" content="article">
+<meta property="og:title" content="网络协议">
+<meta property="og:url" content="https://xuxiaodi666.github.io/my-blog/2023/08/22/%E7%BD%91%E7%BB%9C%E5%8D%8F%E8%AE%AE/index.html">
+<meta property="og:site_name" content="欢迎来到徐嘉迪的博客">
+<meta property="og:description" content="讲一下http缓存的优先级？  HTTP缓存的优先级由浏览器决定，通常按照以下顺序进行判断：  强缓存（Expires和Cache-Control）：浏览器首先检查资源的Expires和Cache-Control头部字段。如果当前时间在Expires指定的过期时间之前，或者Cache-Control中指定了max-age并且没有过期，则直接使用缓存副本，不发送请求到服务器。  协商缓存（Last">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2023-08-22T08:26:37.000Z">
+<meta property="article:modified_time" content="2023-08-22T08:32:18.334Z">
+<meta property="article:author" content="徐嘉迪">
+<meta property="article:tag" content="网络协议">
+<meta name="twitter:card" content="summary_large_image">
+  
+  
+    <meta name="referrer" content="no-referrer-when-downgrade">
+  
+  
+  <title>网络协议 - 欢迎来到徐嘉迪的博客</title>
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
+
+
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/github-markdown-css/4.0.0/github-markdown.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/hint.css/2.7.0/hint.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.css" />
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+<!-- Do not modify the link that theme dependent icons -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1749284_hj8rtnfg7um.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_lbnruvf0jn.css">
+
+
+<link  rel="stylesheet" href="/xuxiaodi666/my-blog.git/css/main.css" />
+
+
+  <link id="highlight-css" rel="stylesheet" href="/xuxiaodi666/my-blog.git/css/highlight.css" />
+  
+    <link id="highlight-css-dark" rel="stylesheet" href="/xuxiaodi666/my-blog.git/css/highlight-dark.css" />
+  
+
+
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    Fluid.ctx = Object.assign({}, Fluid.ctx)
+    var CONFIG = {"hostname":"xuxiaodi666.github.io","root":"/xuxiaodi666/my-blog.git/","version":"1.9.5-a","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":{"measurement_id":null},"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false}},"search_path":"/xuxiaodi666/my-blog.git/local-search.xml","include_content_in_search":true};
+
+    if (CONFIG.web_analytics.follow_dnt) {
+      var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
+      Fluid.ctx.dnt = dntVal && (dntVal.startsWith('1') || dntVal.startsWith('yes') || dntVal.startsWith('on'));
+    }
+  </script>
+  <script  src="/xuxiaodi666/my-blog.git/js/utils.js" ></script>
+  <script  src="/xuxiaodi666/my-blog.git/js/color-schema.js" ></script>
+  
+
+
+  
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+
+<body>
+  
+
+  <header>
+    
+
+<div class="header-inner" style="height: 70vh;">
+  <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/xuxiaodi666/my-blog.git/">
+      <strong>徐嘉迪的博客</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/xuxiaodi666/my-blog.git/">
+                <i class="iconfont icon-home-fill"></i>
+                <span>首页</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/xuxiaodi666/my-blog.git/archives/">
+                <i class="iconfont icon-archive-fill"></i>
+                <span>归档</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/xuxiaodi666/my-blog.git/categories/">
+                <i class="iconfont icon-category-fill"></i>
+                <span>分类</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/xuxiaodi666/my-blog.git/tags/">
+                <i class="iconfont icon-tags-fill"></i>
+                <span>标签</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/xuxiaodi666/my-blog.git/about/">
+                <i class="iconfont icon-user-fill"></i>
+                <span>关于</span>
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              <i class="iconfont icon-search"></i>
+            </a>
+          </li>
+          
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">
+              <i class="iconfont icon-dark" id="color-toggle-icon"></i>
+            </a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+  
+
+<div id="banner" class="banner" parallax=true
+     style="background: url('/xuxiaodi666/my-blog.git/img/defaultb.png') no-repeat center center; background-size: cover;">
+  <div class="full-bg-img">
+    <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+      <div class="banner-text text-center fade-in-up">
+        <div class="h2">
+          
+            <span id="subtitle" data-typed-text="网络协议"></span>
+          
+        </div>
+
+        
+          
+  <div class="mt-3">
+    
+    
+      <span class="post-meta">
+        <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+        <time datetime="2023-08-22 16:26" pubdate>
+          2023年8月22日 下午
+        </time>
+      </span>
+    
+  </div>
+
+  <div class="mt-1">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-chart"></i>
+        
+          7k 字
+        
+      </span>
+    
+
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-clock-fill"></i>
+        
+        
+        
+          59 分钟
+        
+      </span>
+    
+
+    
+    
+      
+        <span id="busuanzi_container_page_pv" style="display: none">
+          <i class="iconfont icon-eye" aria-hidden="true"></i>
+          <span id="busuanzi_value_page_pv"></span> 次
+        </span>
+        
+      
+    
+  </div>
+
+
+        
+      </div>
+
+      
+    </div>
+  </div>
+</div>
+
+</div>
+
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+
+    </div>
+
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div id="board">
+          <article class="post-content mx-auto">
+            <h1 id="seo-header">网络协议</h1>
+            
+              <p class="note note-info">
+                
+                  
+                    本文最后更新于：2023年8月22日 下午
+                  
+                
+              </p>
+            
+            
+              <div class="markdown-body">
+                
+                <blockquote>
+<p>讲一下http缓存的优先级？</p>
+</blockquote>
+<p>HTTP缓存的优先级由浏览器决定，通常按照以下顺序进行判断：</p>
+<ol>
+<li><p>强缓存（Expires和Cache-Control）：浏览器首先检查资源的<code>Expires</code>和<code>Cache-Control</code>头部字段。如果当前时间在<code>Expires</code>指定的过期时间之前，或者<code>Cache-Control</code>中指定了<code>max-age</code>并且没有过期，则直接使用缓存副本，不发送请求到服务器。</p>
+</li>
+<li><p>协商缓存（Last-Modified和ETag）：如果资源没有在强缓存中命中，浏览器会发送请求到服务器，服务器会检查资源的<code>Last-Modified</code>和<code>ETag</code>头部字段。如果<code>Last-Modified</code>指定的时间与浏览器上次请求时返回的时间相同，并且<code>ETag</code>也相同，则表示资源没有变化，服务器返回304 Not Modified状态码，浏览器继续使用缓存副本。</p>
+</li>
+<li><p>如果资源在协商缓存中也没有命中，则服务器返回200 OK状态码和新的资源内容，浏览器会更新缓存，并使用新的资源。</p>
+</li>
+</ol>
+<p>需要注意的是，浏览器在判断缓存优先级时会根据配置和策略进行处理，不同浏览器可能会有一些差异。此外，开发者也可以通过设置响应头部字段来控制缓存行为，例如通过设置<code>Cache-Control</code>的<code>no-cache</code>或<code>no-store</code>来禁用缓存。</p>
+<hr>
+<blockquote>
+<p>POST和GET的区别？</p>
+</blockquote>
+<p>POST和GET是HTTP协议中常用的两种请求方法，它们在以下几个方面有所区别：</p>
+<ol>
+<li><p>参数传递方式：GET请求通过URL参数传递数据，参数会附加在URL的末尾，以<code>?</code>分隔URL和参数，多个参数之间用<code>&amp;</code>连接。而POST请求的参数通常通过请求体传递，参数不会暴露在URL中。</p>
+</li>
+<li><p>请求长度限制：由于GET请求的参数暴露在URL中，URL的长度有限制，不同浏览器对URL长度的限制也不同，通常在2KB到8KB之间。而POST请求没有URL长度限制，可以传递大量数据。</p>
+</li>
+<li><p>安全性：GET请求的参数暴露在URL中，可能会被浏览器缓存、服务器日志等记录，不适合传递敏感信息。而POST请求的参数在请求体中，相对安全一些。</p>
+</li>
+<li><p>幂等性：GET请求是幂等的，即多次重复请求不会产生副作用，不会对资源产生影响。而POST请求通常用于提交数据、修改资源状态等，不是幂等的，多次请求可能会产生不同的结果。</p>
+</li>
+<li><p>缓存处理：GET请求默认可以被缓存，浏览器可以根据URL缓存响应结果。而POST请求默认不会被缓存，每次请求都会向服务器发送请求。</p>
+</li>
+</ol>
+<p>需要根据具体的场景和需求选择使用GET或POST方法，GET适合请求数据，POST适合提交数据。</p>
+<hr>
+<blockquote>
+<p>常见的http状态码？</p>
+</blockquote>
+<p>常见的HTTP状态码包括：</p>
+<ol>
+<li><p>1xx（信息性状态码）：表示请求已被接收，继续处理。</p>
+</li>
+<li><p>2xx（成功状态码）：表示请求已成功处理并返回响应。</p>
+<ul>
+<li>200 OK：请求成功，返回正常结果。</li>
+<li>201 Created：请求成功，服务器创建了新资源。</li>
+<li>204 No Content：请求成功，但响应中没有实体内容。</li>
+</ul>
+</li>
+<li><p>3xx（重定向状态码）：表示需要进一步操作以完成请求。</p>
+<ul>
+<li>301 Moved Permanently：请求的资源已永久移动到新位置。</li>
+<li>302 Found：请求的资源临时移动到新位置。</li>
+<li>304 Not Modified：客户端使用缓存副本，资源未修改。</li>
+</ul>
+</li>
+<li><p>4xx（客户端错误状态码）：表示请求包含语法错误或无法完成请求。</p>
+<ul>
+<li>400 Bad Request：请求无效，服务器无法理解。</li>
+<li>401 Unauthorized：请求需要身份验证。</li>
+<li>403 Forbidden：服务器理解请求，但拒绝执行。</li>
+<li>404 Not Found：请求的资源不存在。</li>
+</ul>
+</li>
+<li><p>5xx（服务器错误状态码）：表示服务器在处理请求时发生错误。</p>
+<ul>
+<li>500 Internal Server Error：服务器遇到不可预知的错误。</li>
+<li>503 Service Unavailable：服务器当前无法处理请求，通常是临时性的。</li>
+</ul>
+</li>
+</ol>
+<p>这只是一些常见的HTTP状态码，还有其他状态码可以根据需要使用。状态码可以帮助开发者和用户了解请求的处理情况，并根据不同的状态码进行相应的处理。</p>
+<hr>
+<blockquote>
+<p>常用的跨域方案有哪些？</p>
+</blockquote>
+<p>常用的跨域解决方案包括：</p>
+<ol>
+<li><p>JSONP（JSON with Padding）：通过动态创建<code>&lt;script&gt;</code>标签来实现跨域请求，服务器返回的数据需要包裹在一个函数调用中，由客户端定义的回调函数来处理返回的数据。</p>
+</li>
+<li><p>CORS（Cross-Origin Resource Sharing）：在服务器端设置响应头部字段，允许指定的域名或所有域名访问资源。通过在服务器端设置<code>Access-Control-Allow-Origin</code>、<code>Access-Control-Allow-Methods</code>等头部字段来控制跨域访问的权限。</p>
+</li>
+<li><p>代理服务器：在同源策略限制下，通过在自己的服务器上建立代理，将跨域请求转发到目标服务器，再将结果返回给客户端。客户端与代理服务器之间不存在跨域问题。</p>
+</li>
+<li><p>WebSocket：WebSocket协议不受同源策略限制，可以与任意服务器建立双向通信。客户端与服务器之间通过WebSocket进行通信，可以实现跨域的数据交互。</p>
+</li>
+<li><p>postMessage：通过<code>window.postMessage</code>方法，可以在不同窗口或iframe之间进行跨域通信。可以通过消息事件监听来接收和处理跨域传递的数据。</p>
+</li>
+</ol>
+<p>需要根据具体的场景和需求选择适合的跨域解决方案，确保安全性和可行性。</p>
+<hr>
+<blockquote>
+<p>如何删除一个cookie？</p>
+</blockquote>
+<p>要删除一个cookie，可以通过设置cookie的过期时间为一个过去的时间来使其失效。以下是通过JavaScript来删除一个cookie的示例代码：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs javascript"><span class="hljs-keyword">function</span> <span class="hljs-title function_">deleteCookie</span>(<span class="hljs-params">name</span>) &#123;<br>  <span class="hljs-variable language_">document</span>.<span class="hljs-property">cookie</span> = name + <span class="hljs-string">&quot;=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;&quot;</span>;<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<p>在上述代码中，<code>deleteCookie</code>函数接受一个参数<code>name</code>，表示要删除的cookie的名称。通过将cookie的过期时间设置为过去的时间（比当前时间早），浏览器会将其视为已过期并删除该cookie。</p>
+<p>使用示例：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs javascript"><span class="hljs-title function_">deleteCookie</span>(<span class="hljs-string">&quot;myCookie&quot;</span>);<br></code></pre></td></tr></table></figure>
+
+<p>这将删除名为”myCookie”的cookie。请注意，要成功删除一个cookie，需要确保在删除cookie时使用的路径和域与设置cookie时的路径和域相匹配。</p>
+<hr>
+<blockquote>
+<p>讲下一个https协议建立连接的过程？</p>
+</blockquote>
+<p>HTTPS协议的建立连接过程如下：</p>
+<ol>
+<li><p>客户端发起请求：客户端向服务器发起HTTPS请求，连接的默认端口是443。</p>
+</li>
+<li><p>服务器证书：服务器将自己的证书发送给客户端。证书中包含了服务器的公钥和相关信息，证书通常由受信任的第三方机构（证书颁发机构，CA）签名，用于验证服务器的身份。</p>
+</li>
+<li><p>客户端验证证书：客户端收到服务器的证书后，会验证证书的有效性。这包括检查证书是否由受信任的机构签名（根证书是否存在于客户端的受信任根证书库中）、证书是否过期、域名是否与请求的域名匹配等。</p>
+</li>
+<li><p>客户端生成密钥：如果服务器的证书验证通过，客户端会生成一个随机的对称密钥，用于后续的加密通信。该对称密钥会使用服务器的公钥进行加密，以确保只有服务器能够解密。</p>
+</li>
+<li><p>密钥交换：客户端将加密后的对称密钥发送给服务器。</p>
+</li>
+<li><p>服务器解密密钥：服务器使用自己的私钥进行解密，获取客户端生成的对称密钥。</p>
+</li>
+<li><p>加密通信：客户端和服务器使用这个对称密钥进行加密和解密，保证后续的通信内容的机密性和完整性。</p>
+</li>
+</ol>
+<p>通过以上步骤，客户端和服务器建立了安全的HTTPS连接，并可以进行加密通信。这样可以确保在传输过程中数据的保密性和完整性，防止被窃听和篡改。</p>
+<hr>
+<blockquote>
+<p>跨域jsonp有什么限制</p>
+</blockquote>
+<p>JSONP（JSON with Padding）是一种跨域解决方案，但它也存在一些限制：</p>
+<ol>
+<li><p>只支持GET请求：JSONP是通过动态创建<code>&lt;script&gt;</code>标签来实现跨域请求的，因此只能使用GET方法发送请求，无法使用POST等其他方法。</p>
+</li>
+<li><p>只支持同步请求：由于JSONP是通过<code>&lt;script&gt;</code>标签加载远程脚本实现的，而脚本加载是同步的，因此无法实现异步请求。</p>
+</li>
+<li><p>安全性问题：JSONP的实现依赖于客户端对返回的数据进行处理，服务器返回的数据需要包裹在一个函数调用中。这就存在安全风险，如果服务器返回的数据被篡改或注入恶意代码，客户端可能会受到攻击。</p>
+</li>
+<li><p>只支持一次请求：JSONP只能发送一次请求，无法像AJAX那样进行多次请求和处理。</p>
+</li>
+<li><p>依赖服务器的支持：JSONP需要服务器端支持，服务器需要返回包裹在回调函数中的数据，而不是直接返回JSON格式的数据。</p>
+</li>
+</ol>
+<p>需要注意的是，由于JSONP存在一些安全和功能限制，现在已经有更安全和灵活的跨域解决方案，如CORS（Cross-Origin Resource Sharing）。在使用JSONP时，应该注意安全性和数据可靠性，并根据具体需求和场景选择适合的跨域方案。</p>
+<hr>
+<blockquote>
+<p>CORS简单请求和复杂请求的差别</p>
+</blockquote>
+<p>CORS（Cross-Origin Resource Sharing）是一种跨域解决方案，根据请求的复杂性，CORS可以分为简单请求和复杂请求，它们的主要差别在于浏览器对服务器端的请求预检（Preflight）和响应头部字段的要求。</p>
+<p>简单请求（Simple Request）满足以下条件：</p>
+<ol>
+<li>请求方法为：GET、POST、HEAD。</li>
+<li>请求头部字段只能为以下几种常见字段：Accept、Accept-Language、Content-Language、Content-Type（仅限于application&#x2F;x-www-form-urlencoded、multipart&#x2F;form-data、text&#x2F;plain）。</li>
+</ol>
+<p>对于简单请求，浏览器会直接发送请求，不会发送预检请求（OPTIONS请求），服务器端需要设置响应头部字段来允许跨域请求，主要包括：</p>
+<ol>
+<li><code>Access-Control-Allow-Origin</code>：指定允许访问的域名，可以是单个域名、多个域名或通配符*。</li>
+<li><code>Access-Control-Allow-Credentials</code>：指定是否允许发送Cookie等凭证信息。</li>
+<li><code>Access-Control-Allow-Methods</code>：指定允许的请求方法。</li>
+<li><code>Access-Control-Allow-Headers</code>：指定允许的请求头部字段。</li>
+</ol>
+<p>复杂请求（Preflight Request）不满足简单请求的条件，主要包括：</p>
+<ol>
+<li>使用了非简单请求方法（如PUT、DELETE等）。</li>
+<li>使用了自定义的请求头部字段。</li>
+</ol>
+<p>对于复杂请求，浏览器会先发送一个预检请求（OPTIONS请求），服务器需要响应预检请求并设置相应的响应头部字段，以告知浏览器是否允许实际请求。预检请求的响应头部字段与简单请求的响应头部字段类似，但需要多设置一个<code>Access-Control-Max-Age</code>字段，用于指定预检请求的有效期。</p>
+<p>需要注意的是，对于复杂请求，浏览器在发送实际请求之前，会先发送预检请求，确保服务器允许跨域访问。服务器端需要正确处理预检请求并设置相应的响应头部字段，以确保跨域请求的顺利进行。</p>
+<hr>
+<blockquote>
+<p>http状态码问完301和302的差别</p>
+</blockquote>
+<p>301和302是HTTP协议中的重定向状态码，用于指示客户端应该采取的下一步操作。它们的主要区别在于缓存策略和请求方法的保持。</p>
+<ol>
+<li><p>301 Moved Permanently（永久重定向）：表示请求的资源已永久移动到新的位置。客户端在接收到301响应后，应该更新其URL并将所有后续请求发送到新的URL。搜索引擎会将原始URL的搜索排名转移到新的URL上。此外，客户端在对301响应的资源进行缓存时，应该将新的URL视为有效的缓存标识符。</p>
+</li>
+<li><p>302 Found（临时重定向）：表示请求的资源临时移动到新的位置。客户端在接收到302响应后，应该继续使用原始URL进行后续请求。搜索引擎不会将原始URL的搜索排名转移到新的URL上。此外，客户端在对302响应的资源进行缓存时，应该将原始URL视为有效的缓存标识符。</p>
+</li>
+</ol>
+<p>总结：</p>
+<ul>
+<li>301是永久重定向，客户端应该更新URL并将所有后续请求发送到新的URL，搜索引擎会更新搜索排名。</li>
+<li>302是临时重定向，客户端应该继续使用原始URL进行后续请求，搜索引擎不会更新搜索排名。</li>
+</ul>
+<p>需要根据具体的需求和场景来选择合适的重定向状态码。</p>
+<hr>
+<blockquote>
+<p>307是干嘛的</p>
+</blockquote>
+<p>307 Temporary Redirect（临时重定向）是HTTP协议中的一种重定向状态码。它与302 Found状态码的含义类似，都表示请求的资源临时移动到了新的位置。然而，307状态码在处理POST请求时与302有所不同。</p>
+<p>307状态码要求客户端在接收到响应后继续保持请求方法不变，并将重定向请求发送到新的URL。这意味着对于原始的POST请求，客户端应该继续使用POST方法发送请求到新的URL上。这与302状态码不同，302状态码会导致客户端将POST请求转换为GET请求发送到新的URL上。</p>
+<p>307状态码的主要目的是确保在重定向过程中保留原始请求的方法和消息主体，以便客户端能够按照预期进行正确的请求。这在某些情况下可能非常重要，例如在需要保持用户提交的表单数据时，使用307可以确保数据不会丢失。</p>
+<p>需要注意的是，由于307状态码要求客户端保持请求方法不变，因此在某些旧版本的浏览器中可能会存在兼容性问题。在实际应用中，开发者需要根据具体需求和浏览器兼容性考虑来选择适合的重定向状态码。</p>
+<hr>
+<blockquote>
+<p>webSocket、webRTC之类的原理</p>
+</blockquote>
+<p>WebSocket和WebRTC是两种不同的Web技术，它们分别用于实现实时通信和实时音视频通信。</p>
+<ol>
+<li>WebSocket原理：<br>WebSocket是一种基于TCP的全双工通信协议，它允许在客户端和服务器之间建立持久连接，以实现实时通信。WebSocket协议通过在标准的HTTP握手之后升级到WebSocket连接，使用特殊的帧格式进行数据传输。</li>
+</ol>
+<ul>
+<li>客户端首先发送一个HTTP请求，包含特定的头部字段（如Upgrade和Connection），表明希望升级到WebSocket协议。</li>
+<li>服务器收到请求后，可以选择接受或拒绝升级请求。如果接受，服务器会发送一个包含特定头部字段的HTTP响应，表明成功升级到WebSocket连接。</li>
+<li>连接升级成功后，客户端和服务器之间可以通过WebSocket帧进行双向的实时通信。帧包括控制帧和数据帧，可以通过WebSocket API进行发送和接收。</li>
+</ul>
+<ol start="2">
+<li>WebRTC原理：<br>WebRTC（Web Real-Time Communication）是一种用于实时音视频通信的Web技术。它提供了一套API和协议，允许浏览器之间直接进行点对点的音视频传输，而无需通过中间服务器。</li>
+</ol>
+<ul>
+<li>WebRTC使用ICE（Interactive Connectivity Establishment）协议来建立对等连接。ICE通过候选地址收集和网络遍历，找到可用的传输路径。</li>
+<li>在对等连接建立之前，需要进行信令交换来协商连接参数和候选地址。信令可以使用各种协议，如WebSocket、HTTP、XMPP等。</li>
+<li>一旦对等连接建立，WebRTC使用SRTP（Secure Real-Time Transport Protocol）进行音视频数据的传输。SRTP提供了加密和鉴别机制，确保数据的安全性和完整性。</li>
+</ul>
+<p>通过WebRTC，开发者可以在浏览器中实现实时音视频通信，如视频会议、实时游戏、远程教育等应用场景。</p>
+<p>需要注意的是，WebSocket和WebRTC是两种不同的技术，用于不同的通信需求。WebSocket适用于一般的实时通信，而WebRTC专注于实时音视频通信。</p>
+<hr>
+<blockquote>
+<p>WebSocket API有哪些</p>
+</blockquote>
+<p>WebSocket API是用于在Web浏览器中实现WebSocket协议的一组接口和方法。以下是一些常用的WebSocket API：</p>
+<ol>
+<li>WebSocket对象：表示WebSocket连接的实例。通过创建WebSocket对象来建立与服务器的连接。</li>
+</ol>
+<ul>
+<li><p><code>new WebSocket(url[, protocols])</code>：创建一个新的WebSocket对象。<code>url</code>参数指定连接的URL，<code>protocols</code>参数是一个可选的字符串数组，指定了客户端支持的子协议。</p>
+</li>
+<li><p><code>WebSocket.readyState</code>：表示WebSocket连接的当前状态，包括CONNECTING、OPEN、CLOSING和CLOSED。</p>
+</li>
+<li><p><code>WebSocket.onopen</code>：当WebSocket连接成功打开时触发的事件处理程序。</p>
+</li>
+<li><p><code>WebSocket.onmessage</code>：当接收到服务器发送的消息时触发的事件处理程序。</p>
+</li>
+<li><p><code>WebSocket.send(data)</code>：将数据发送到服务器。</p>
+</li>
+<li><p><code>WebSocket.close([code[, reason]])</code>：关闭WebSocket连接。</p>
+</li>
+</ul>
+<ol start="2">
+<li>事件处理程序：WebSocket对象支持一些事件处理程序，用于处理连接状态的变化和消息的接收。</li>
+</ol>
+<ul>
+<li><p><code>onopen</code>：连接成功打开时触发的事件处理程序。</p>
+</li>
+<li><p><code>onmessage</code>：接收到消息时触发的事件处理程序。</p>
+</li>
+<li><p><code>onerror</code>：发生错误时触发的事件处理程序。</p>
+</li>
+<li><p><code>onclose</code>：连接关闭时触发的事件处理程序。</p>
+</li>
+</ul>
+<p>以上是一些常用的WebSocket API，开发者可以利用这些API来创建WebSocket连接、发送和接收数据，并处理连接状态的变化。</p>
+
+                
+              </div>
+            
+            <hr/>
+            <div>
+              <div class="post-metas my-3">
+  
+    <div class="post-meta mr-3 d-flex align-items-center">
+      <i class="iconfont icon-category"></i>
+      
+
+<span class="category-chains">
+  
+  
+    
+      <span class="category-chain">
+        
+  <a href="/xuxiaodi666/my-blog.git/categories/%E7%BD%91%E7%BB%9C%E5%8D%8F%E8%AE%AE/" class="category-chain-item">网络协议</a>
+  
+  
+
+      </span>
+    
+  
+</span>
+
+    </div>
+  
+  
+    <div class="post-meta">
+      <i class="iconfont icon-tags"></i>
+      
+        <a href="/xuxiaodi666/my-blog.git/tags/%E7%BD%91%E7%BB%9C%E5%8D%8F%E8%AE%AE/" class="print-no-link">#网络协议</a>
+      
+    </div>
+  
+</div>
+
+
+              
+  
+
+  <div class="license-box my-3">
+    <div class="license-title">
+      <div>网络协议</div>
+      <div>https://xuxiaodi666.github.io/my-blog/2023/08/22/网络协议/</div>
+    </div>
+    <div class="license-meta">
+      
+        <div class="license-meta-item">
+          <div>作者</div>
+          <div>徐嘉迪</div>
+        </div>
+      
+      
+        <div class="license-meta-item license-meta-date">
+          <div>发布于</div>
+          <div>2023年8月22日</div>
+        </div>
+      
+      
+      
+    </div>
+    <div class="license-icon iconfont"></div>
+  </div>
+
+
+
+              
+                <div class="post-prevnext my-3">
+                  <article class="post-prev col-6">
+                    
+                    
+                      <a href="/xuxiaodi666/my-blog.git/2023/08/22/%E6%80%A7%E8%83%BD%E4%BC%98%E5%8C%96/" title="性能优化">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile">性能优化</span>
+                        <span class="visible-mobile">上一篇</span>
+                      </a>
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/xuxiaodi666/my-blog.git/2023/08/22/React-Vue-%E5%B0%8F%E7%A8%8B%E5%BA%8F/" title="React/Vue/小程序">
+                        <span class="hidden-mobile">React/Vue/小程序</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+          </article>
+        </div>
+      </div>
+    </div>
+
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+  <aside class="sidebar" style="margin-left: -1rem">
+    <div id="toc">
+  <p class="toc-header">
+    <i class="iconfont icon-list"></i>
+    <span>目录</span>
+  </p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+
+
+  </aside>
+
+
+    </div>
+  </div>
+</div>
+
+
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+
+
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v" for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+  
+    <div class="footer-content">
+       <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>徐嘉迪</span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"><span>郝娅惠</span></a> 
+    </div>
+  
+  
+  
+  
+</div>
+
+  </footer>
+
+  <!-- Scripts -->
+  
+  <script  src="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://lib.baomitu.com/jquery/3.6.4/jquery.min.js" ></script>
+<script  src="https://lib.baomitu.com/twitter-bootstrap/4.6.1/js/bootstrap.min.js" ></script>
+<script  src="/xuxiaodi666/my-blog.git/js/events.js" ></script>
+<script  src="/xuxiaodi666/my-blog.git/js/plugins.js" ></script>
+
+
+  <script  src="https://lib.baomitu.com/typed.js/2.0.12/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var subtitle = document.getElementById('subtitle');
+      if (!subtitle || !typing) {
+        return;
+      }
+      var text = subtitle.getAttribute('data-typed-text');
+      
+        typing(text);
+      
+    })(window, document);
+  </script>
+
+
+
+
+  
+    <script  src="/xuxiaodi666/my-blog.git/js/img-lazyload.js" ></script>
+  
+
+
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/tocbot/4.20.1/tocbot.min.js', function() {
+    var toc = jQuery('#toc');
+    if (toc.length === 0 || !window.tocbot) { return; }
+    var boardCtn = jQuery('#board-ctn');
+    var boardTop = boardCtn.offset().top;
+
+    window.tocbot.init(Object.assign({
+      tocSelector     : '#toc-body',
+      contentSelector : '.markdown-body',
+      linkClass       : 'tocbot-link',
+      activeLinkClass : 'tocbot-active-link',
+      listClass       : 'tocbot-list',
+      isCollapsedClass: 'tocbot-is-collapsed',
+      collapsibleClass: 'tocbot-is-collapsible',
+      scrollSmooth    : true,
+      includeTitleTags: true,
+      headingsOffset  : -boardTop,
+    }, CONFIG.toc));
+    if (toc.find('.toc-list-item').length > 0) {
+      toc.css('visibility', 'visible');
+    }
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('tocbot' in window) {
+        tocbot.refresh();
+        var toc = jQuery('#toc');
+        if (toc.length === 0 || !tocbot) {
+          return;
+        }
+        if (toc.find('.toc-list-item').length > 0) {
+          toc.css('visibility', 'visible');
+        }
+      }
+    });
+  });
+</script>
+
+
+  <script src=https://lib.baomitu.com/clipboard.js/2.0.11/clipboard.min.js></script>
+
+  <script>Fluid.plugins.codeWidget();</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/anchor-js/4.3.1/anchor.min.js', function() {
+    window.anchors.options = {
+      placement: CONFIG.anchorjs.placement,
+      visible  : CONFIG.anchorjs.visible
+    };
+    if (CONFIG.anchorjs.icon) {
+      window.anchors.options.icon = CONFIG.anchorjs.icon;
+    }
+    var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+    var res = [];
+    for (var item of el) {
+      res.push('.markdown-body > ' + item.trim());
+    }
+    if (CONFIG.anchorjs.placement === 'left') {
+      window.anchors.options.class = 'anchorjs-link-left';
+    }
+    window.anchors.add(res.join(', '));
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('anchors' in window) {
+        anchors.removeAll();
+        var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+        var res = [];
+        for (var item of el) {
+          res.push('.markdown-body > ' + item.trim());
+        }
+        if (CONFIG.anchorjs.placement === 'left') {
+          anchors.options.class = 'anchorjs-link-left';
+        }
+        anchors.add(res.join(', '));
+      }
+    });
+  });
+</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.js', function() {
+    Fluid.plugins.fancyBox();
+  });
+</script>
+
+
+  <script>Fluid.plugins.imageCaption();</script>
+
+  <script  src="/xuxiaodi666/my-blog.git/js/local-search.js" ></script>
+
+  <script defer src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js" ></script>
+
+
+
+
+
+<!-- 主题的启动项，将它保持在最底部 -->
+<!-- the boot of the theme, keep it at the bottom -->
+<script  src="/xuxiaodi666/my-blog.git/js/boot.js" ></script>
+
+
+  
+
+  <noscript>
+    <div class="noscript-warning">博客在允许 JavaScript 运行的环境下浏览效果更佳</div>
+  </noscript>
+</body>
+</html>
